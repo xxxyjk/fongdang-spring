@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<context:property-placeholder location="classpath:fongdang.properties"/>
+	
+	
+	<!-- DB  -->
+	<!-- DBCP -->
+ 	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource" destroy-method="close">
+ 		<property name="driverClassName" value="${db.driverClassName}"/>
+      	<property name="url" value="${db.url}"/>
+      	<!-- <property name="url" value="${db.urlpclass}"/> -->
+       	<property name="username" value="${db.username}"/>
+       	<property name="password" value="${db.password}"/>
+	</bean> 
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSsFac">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+	</bean>
+	<bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlss">
+		<constructor-arg ref="sqlSsFac"/>
+	</bean>
+
+	<!-- Gmail -->
+	<bean class="org.springframework.mail.javamail.JavaMailSenderImpl" id="mailSender">
+		<property name="host" value="smtp.gmail.com"/>
+		<property name="port" value="587"/>
+		<property name="username" value="${email.account}"/>
+		<property name="password" value="${email.password}"/>
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <!-- gmail의 경우 보안문제 업데이트로 인해 SSLSocketFactory를 추가해야 smtp 사용 가능. -->
+                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+                <prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+				<prop key="mail.smtp.ssl.protocols">TLSv1.2</prop>
+			</props>		
+		</property>
+	</bean>
+	
+	<!-- Transaction Manager 생성등록 -->
+	<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+		<!-- <constructor-arg ref="dataSource"></constructor-arg> -->
+		<property name="dataSource" ref="dataSource"/>
+	</bean> 				
+	
+	<tx:annotation-driven/>
+		
+</beans>

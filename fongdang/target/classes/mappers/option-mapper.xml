@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="Option">
+
+	<insert id="insertOption" parameterType="Option">
+		INSERT
+			INTO
+			FONGDANG."OPTION"
+				(OPTION_NO,
+				P_NO,
+				OPTION_NAME,
+				OPTION_INFO,
+				OPTION_PRICE,
+				OPTION_LIMIT)
+		values(
+				 #{option_no}
+				,#{p_no}
+				,#{option_name}
+				,#{option_info}
+				,#{option_price}
+				,#{option_limit}
+		)
+	</insert>
+
+	<update id="updateOption" parameterType="Option">
+		update option 
+		   set option_name=#{option_name}
+				,option_info=#{option_info}
+				,option_price=#{option_price}
+				,option_limit=#{option_limit}
+		where option_no=#{option_no}
+	</update>
+
+	<select id="selectOption" resultType="Option" parameterType="int">
+		select * 
+		from "OPTION"
+		where option_no=#{option_no}
+		and P_NO=#{p_no}
+	</select>
+
+	<select id="selectOneGetPNo" parameterType="String" resultType="int">
+		SELECT p.P_NO 
+		FROM MAKER m , PRODUCT p
+		WHERE m.MAKER_NAME = p.MAKER_NAME 
+		AND m.EMAIL = #{email}
+	</select>
+
+	<select id="selectOptionNo" resultType="int" parameterType="int">
+		select nvl(max(option_no),0)+1 as option_no 
+		  from "OPTION"
+		 where P_NO=#{p_no}
+	</select>
+	
+	<select id="selectOptionList" resultType="Option" parameterType="int">
+		select * 
+		from "OPTION"
+		 where P_NO=#{p_no}
+	</select>
+	
+	<delete id="deleteOption" parameterType="_int">
+		delete from "OPTION" 
+		where option_no=#{option_no} and P_NO=#{p_no}
+	
+	</delete>
+</mapper>

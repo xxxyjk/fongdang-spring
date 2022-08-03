@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Funding">
+	<resultMap type="Funding" id="FundingResultMap">
+		<result property="p_no" column="p_no"/>
+		<result property="p_name" column="p_name"/>
+		<result property="p_goal" column="p_goal"/>
+		<result property="p_thumbnail" column="p_thumbnail"/>
+		<result property="p_summary" column="p_summary"/>
+		<result property="p_story" column="p_story" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="p_certification" column="p_certification"/>
+		<result property="start_day" column="start_day"/>
+		<result property="end_day" column="end_day"/>
+		<result property="payment_plan" column="payment_plan"/>
+		<result property="delivery_date" column="delivery_date"/>
+		<result property="p_approval" column="p_approval"/>
+		<result property="p_report_cnt" column="p_report_cnt"/>
+		<result property="p_sms_cnt" column="p_sms_cnt"/>
+		<result property="supporter" column="supporter"/>
+		<result property="total_funding_money" column="total_funding_money"/>
+		<result property="p_goal_str" column="p_goal_str"/>
+		<result property="p_goal_percent" column="p_goal_percent"/>
+		<result property="d_day" column="d_day"/>
+		<result property="email" column="email"/>
+		<result property="category_name" column="category_name"/>
+		<result property="maker_category" column="maker_category"/>
+		<result property="maker_logo" column="maker_logo"/>
+		<result property="maker_name" column="maker_name"/>
+		<result property="maker_email" column="maker_email"/>
+		<result property="maker_phone" column="maker_phone"/>
+		<result property="maker_kakao_channel" column="maker_kakao_channel"/>
+		<result property="maker_homepage" column="maker_homepage"/>
+	</resultMap>
+	
+	<update id="updateFundingApproval" parameterType="Funding">
+		UPDATE product
+		SET p_approval = #{p_approval}
+		WHERE p_no = #{p_no}
+	</update>
+	
+	<select id="selectFunding" parameterType="_int" resultMap="FundingResultMap">
+		SELECT p_no, supporter, TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money, 
+		ROUND(total_funding_money / p.p_goal * 100) p_goal_percent, TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+		 p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day, TO_CHAR(p.end_day, 'YYYY.MM.DD') end_day,
+		  TO_CHAR(p.payment_plan, 'YYYY.MM.DD') payment_plan, TO_CHAR(p.delivery_date, 'YYYY.MM.DD') delivery_date, 
+		  p.p_story, p.p_thumbnail, p.p_summary, c.category_name, p.p_name, m.maker_logo, maker_name, m.maker_email, 
+		  m.maker_phone, m.maker_kakao_channel, m.maker_homepage
+		FROM view_funding_supporter_money JOIN product p USING(p_no)
+        		                          JOIN category c USING(category_id)
+                		                  JOIN maker m USING(maker_name)
+        WHERE p_no = #{p_no}
+	</select>
+	
+	<select id="selectFundingReviewList" parameterType="_int" resultType="Review">
+		SELECT r.r_no, r.p_no, m.profile, r.r_writer, TO_CHAR(r_date, 'YYYY-MM-DD HH24:MI:SS') r_date, r.r_content
+		FROM review r JOIN member m 
+		              ON r.r_writer = m.nickname
+		WHERE p_no = #{p_no}
+		ORDER BY r.r_no DESC
+	</select>
+	
+	<select id="selectBeforeFunding" parameterType="_int" resultMap="FundingResultMap">
+		<![CDATA[
+			SELECT p.p_no, p.p_sms_cnt, TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day,
+			 p.p_story, p.p_thumbnail, p.p_summary, c.category_name, p.p_name, m.maker_logo, 
+			 maker_name, m.maker_email, m.maker_phone, m.maker_kakao_channel, m.maker_homepage
+			FROM product p JOIN category c USING(category_id)
+		    	           JOIN maker m USING(maker_name)
+			WHERE p_no = #{p_no}
+		]]>
+	</select>
+	
+	<select id="selectSms" parameterType="hashmap" resultType="Sms">
+		SELECT * FROM sms WHERE p_no = #{p_no} AND email = #{email}
+	</select>
+
+	<select id="countApprovalList" resultType="_int">
+		SELECT COUNT(*) FROM product WHERE p_approval = 'N'
+	</select>
+	
+	<select id="selectApprovalList" parameterType="hashmap" resultMap="FundingResultMap">
+		SELECT p_no, email, p_name, category_name, maker_name, maker_category, maker_license_copy, p_report_cnt, start_day, d_day
+		FROM (SELECT ROWNUM rn, t1.*
+		      FROM (SELECT p_no, email, p_name, category_name, maker_name, maker_category, maker_license_copy, p_report_cnt, start_day, end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day
+		            FROM product JOIN category USING(category_id)
+		                         JOIN maker USING(maker_name)
+		                         JOIN member USING(email)
+		            WHERE p_approval = 'N'
+		            ORDER BY p_no DESC) t1) t2
+		WHERE t2.rn BETWEEN #{startRnum} AND #{endRnum}
+	</select>
+	
+	
+	
+<!-- 펀딩 예정 상품조회 -->
+	<select id="selectPreProducts" parameterType="_int" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24')|| '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+<!-- 펀딩 목표달성 퍼센트 상위 상품조회 -->
+	<select id="selectRankProducts" parameterType="_int" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent,category_id,p_name,
+    p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and p_approval = 'Y'
+	order by p_goal_percent desc
+]]>
+	</select>
+
+<!-- 펀딩 상품 조회 -->
+	<select id="selectAllProducts" resultType="Funding" parameterType="Map">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id)
+	left outer join view_total_like_review_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and p_approval = 'Y'
+]]>
+
+<if test="category_id == 'C1' || category_id == 'C2' || category_id == 'C3' || category_id == 'C4' || 
+			category_id == 'C5' || category_id == 'C6'">
+    AND category_id = #{category_id}
+</if>	 
+	 <if test="cateSelect == 'v1'"> order by end_day asc</if>
+	 <if test="cateSelect == 'v2'"> order by total_like desc </if>
+	 <if test="cateSelect == 'v3'"> order by total_review desc </if>
+	 <if test="cateSelect == 'v4'"> order by total_funding_money desc </if>
+</select>
+	
+	
+<!--펀딩상품 카테고리 c1~c6 -->
+	<select id="selectCateProducts1" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and category_id = 'C1' and p_approval = 'Y'
+]]>
+ 	<if test="cateSelect == 'v2'">
+         order by total_like desc
+    </if>
+	 <if test="cateSelect == 'v3'">
+         order by total_review desc
+    </if>
+	 <if test="cateSelect == 'v4'">
+         order by total_funding_money desc
+    </if>
+	</select>
+	<select id="selectCateProducts2" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and category_id = 'C2' and p_approval = 'Y'
+]]>
+ 	<if test="cateSelect == 'v2'">
+         order by total_like desc
+    </if>
+	 <if test="cateSelect == 'v3'">
+         order by total_review desc
+    </if>
+	 <if test="cateSelect == 'v4'">
+         order by total_funding_money desc
+    </if>
+	</select>
+	<select id="selectCateProducts3" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and category_id = 'C3' and p_approval = 'Y'
+]]>
+	 <if test="cateSelect == 'v2'">
+         order by total_like desc
+    </if>
+	 <if test="cateSelect == 'v3'">
+         order by total_review desc
+    </if>
+	 <if test="cateSelect == 'v4'">
+         order by total_funding_money desc
+    </if>
+	</select>
+	<select id="selectCateProducts4" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and category_id = 'C4' and p_approval = 'Y'
+]]>
+	 <if test="cateSelect == 'v2'">
+         order by total_like desc
+    </if>
+	 <if test="cateSelect == 'v3'">
+         order by total_review desc
+    </if>
+	 <if test="cateSelect == 'v4'">
+         order by total_funding_money desc
+    </if>
+	</select>
+	<select id="selectCateProducts5" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and category_id = 'C5' and p_approval = 'Y'
+]]>
+	 <if test="cateSelect == 'v2'">
+         order by total_like desc
+    </if>
+	 <if test="cateSelect == 'v3'">
+         order by total_review desc
+    </if>
+	 <if test="cateSelect == 'v4'">
+         order by total_funding_money desc
+    </if>
+	</select>
+	<select id="selectCateProducts6" parameterType="string" resultType="Funding">
+<![CDATA[
+select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where start_day < sysdate and end_day > sysdate and category_id = 'C6' and p_approval = 'Y'
+]]>
+	 <if test="cateSelect == 'v2'">
+         order by total_like desc
+    </if>
+	 <if test="cateSelect == 'v3'">
+         order by total_review desc
+    </if>
+	 <if test="cateSelect == 'v4'">
+         order by total_funding_money desc
+    </if>
+	</select>
+	
+	<!--예정 펀딩상품 카테고리 c1~c6 -->
+	<select id="selectCatePreProducts1" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분'start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and category_id = 'C1' and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+	<select id="selectCatePreProducts2" parameterType="string" resultType="Funding">
+<![CDATA[
+select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and category_id = 'C2' and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+	<select id="selectCatePreProducts3" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and category_id = 'C3' and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+	<select id="selectCatePreProducts4" parameterType="string" resultType="Funding">
+<![CDATA[
+select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and category_id = 'C4' and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+	<select id="selectCatePreProducts5" parameterType="string" resultType="Funding">
+<![CDATA[
+select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and category_id = 'C5' and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+	<select id="selectCatePreProducts6" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_name,p_name,p_thumbnail,
+	TO_CHAR(p.start_day, 'mm/dd') || '(' || TO_CHAR(p.start_day, 'dy', 'nls_date_language=korean') || ') ' || TO_CHAR(p.start_day, 'HH24') || '시'|| TO_CHAR(p.start_day, 'MI')||'분' start_day
+	from product p left outer join category using (category_id)
+	where start_day > sysdate and category_id = 'C6' and p_approval = 'Y'
+	order by start_day asc
+]]>
+	</select>
+	
+<!-- 헤더 카테고리 검색 -->
+	<select id="selectSearchList" parameterType="string" resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day,
+	ROUND(total_funding_money / p.p_goal * 100) p_goal_percent
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+    where start_day < sysdate and end_day > sysdate and category_name like '%'||#{search_category}||'%' and p_approval = 'Y'
+    order by end_day asc
+]]>
+	</select>
+	
+<!-- 메인 앵콜Top3 -->	
+	<select id="reFundingProducts" parameterType="string"
+		resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,p_name,p_thumbnail,category_name
+	from product p left outer join category using (category_id)
+	where start_day < sysdate and end_day > sysdate and p_name like '%'||'앵콜'||'%'  and p_approval = 'Y'
+]]>
+	</select>
+<!-- 메인 기간 만료 상품 Top3 -->
+<select id="endProducts" parameterType="string"
+		resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,category_id,p_name,p_thumbnail,start_day,end_day, category_name,
+	TO_CHAR(total_funding_money, 'FM999,999,999,999') total_funding_money,
+	TO_CHAR(p.p_goal, 'FM999,999,999,999') p_goal_str,
+	p.end_day - TO_DATE(TO_CHAR(sysdate, 'yyyy/mm/dd')) d_day
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+    where start_day < sysdate and end_day > sysdate and p_approval = 'Y'
+    order by end_day asc
+]]>
+	</select>
+
+<!-- 메인 누적 판매 가격 BEST 상품 Top3 -->
+<select id="bestProducts" parameterType="string"
+		resultType="Funding">
+<![CDATA[
+	select p_no,maker_name,p_name,p_thumbnail,category_name, total_funding_money
+	from product p left outer join category using (category_id) left outer join view_funding_supporter_money using(p_no)
+	where p_approval = 'Y'
+    order by total_funding_money desc
+]]>
+	</select>
+</mapper>
