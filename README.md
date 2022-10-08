@@ -20,7 +20,7 @@
  >- listly   
  >- StarUML, Version: 5.0.1   
  >- draw.io
- >- 운영체제: Windows 10 Pro/Home x64
+ >- Operating System: Windows 10 Pro/Home x64
  
 >#### 2-2. `Back-end`
   >- Java 11
