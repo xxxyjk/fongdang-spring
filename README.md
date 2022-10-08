@@ -78,10 +78,10 @@
 </br>
 
 ## 8. 참고 사이트
->- Bootstrap
->- wadiz 
->- 크라우디
->- 텀블벅
+>- Bootstrap: https://getbootstrap.com/
+>- wadiz: https://www.wadiz.kr/web/main
+>- 크라우디: https://www.ycrowdy.com/
+>- 텀블벅: https://tumblbug.com/discover
 
 </br>
 
