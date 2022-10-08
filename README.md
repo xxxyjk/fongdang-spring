@@ -43,7 +43,7 @@
 </br>
 
 ## 3. ERD 설계
-
+![fongdang-ERD](https://user-images.githubusercontent.com/98321110/194699929-b9668700-3b1a-4429-a752-73f1ac939fce.png)
 
 </br>
 
