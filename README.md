@@ -17,8 +17,7 @@
  >- Spring tool suite 3 (Version: 3.9.18.RELEASE)    
  >- Get Started With Oracle Database 11g Express Edition   
   /Oracle SQL Developer, Version:Oracle IDE 17.2.0, Oracle IDE 21.2.1    
- >- listly   
- >- erdcloud
+ >- listly
  >- StarUML, Version: 5.0.1   
  >- draw.io
  >- Operating System: Windows 10 Pro/Home x64
