@@ -57,7 +57,7 @@
 </br>
 
 ## 5. 프로젝트 흐름
-
+![spring_structure](https://user-images.githubusercontent.com/98321110/194737059-f544d195-0919-4d0c-9cf9-01a69246d844.PNG)
 </br>
 
 ## 6. 프로젝트에서 맡은 기능
