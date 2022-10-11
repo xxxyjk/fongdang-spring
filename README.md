@@ -62,7 +62,11 @@
 </br>
 
 ### 4-2. 사용자 요청
+![user_request_code(1)](https://user-images.githubusercontent.com/98321110/195053256-40eb5b63-0dc5-40c7-b14e-09a0266b39a3.PNG)
 
+- **Ajax를 통한 비동기 요청 또는 javascript를 이용한 특정 url로 양식 값 전달**
+  - 사용자로부터 이벤트 발생 시 Ajax방식을 통해 결과 값을 받거나,   
+    form태그를 통해 양식 값을 전달합니다.   
 </br>
 
 ## 5. 프로젝트에서 맡은 기능
