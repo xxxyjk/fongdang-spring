@@ -106,7 +106,7 @@
  </br>
  
  ### 5-1 프로젝트 내용
- - 소셜 로그인 API
+ - 소셜 로그인 API   
  ![image](https://user-images.githubusercontent.com/98321110/196035066-7295cada-82dc-47dd-ae62-a504c304b524.png)   
  화면설명: 로그인 페이지에서 카카오 계저을 통해 로그인하는 경우의 사용자가 보여지는 화면   
  
@@ -127,7 +127,7 @@
  
  ---
  
- - mail API
+ - mail API   
  ![image](https://user-images.githubusercontent.com/98321110/196035389-f01ef17e-4fd2-426d-bccf-f5772050af59.png)
  화면설명: 사용자가 아이디·비밀번호 찾기 페이지에서 비밀번호 찾기를 진행하는 경우 보여지는 화면 
 
