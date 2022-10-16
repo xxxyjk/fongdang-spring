@@ -79,13 +79,13 @@
 </br>
 
 ### 4-4. Service
-![service_code(1)](https://user-images.githubusercontent.com/98321110/196032785-2a45510a-dd30-46d0-bb0c-9a5e7f0c863c.PNG)
+![service_code(1)](https://user-images.githubusercontent.com/98321110/196033241-42712f5e-63f2-422b-8572-0d2beb9df987.PNG)   
 - **다형성 구현**
   - 인터페이스를 통해 객체의 사용방법을 정리하였으며 설계 단계와 결과 단계의 산출물을 효율적으로 관리하였습니다.
 </br>
 
 ### 4-5. Repository
-
+![repository_code(1)](https://user-images.githubusercontent.com/98321110/196033367-20782383-453b-4465-82bc-7aeb66f50b1b.PNG)   
 </br>
 
 
