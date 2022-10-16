@@ -72,7 +72,7 @@
 ![controller_code(1)](https://user-images.githubusercontent.com/98321110/195058134-82d7eb86-75ed-41cc-8412-22ab0f894374.PNG)
 - **사용자 요청처리**
   - Spring MVC의 구성 요소 중 하나인 DispatcherServlet을 통해 클라이언트의 요청을 받고 결과 값을 View에 전달합니다.
-  - Spring MVC의 구성 요소 중 하나인 HandlerMapping을 통해 클라이언트가 요청한 url을 누가 어떤 컨트롤러 또는 메소드가 처리할 지 결정합니다.
+  - Spring MVC의 구성 요소 중 하나인 HandlerMapping을 통해 클라이언트가 요청한 url을 어떤 컨트롤러 또는 메소드가 처리할 지 결정합니다.
 </br>
 
 ### 4-4. Service
