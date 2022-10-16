@@ -85,7 +85,12 @@
 </br>
 
 ### 4-5. Repository
-![repository_code(1)](https://user-images.githubusercontent.com/98321110/196033367-20782383-453b-4465-82bc-7aeb66f50b1b.PNG)   
+![repository_code(1)](https://user-images.githubusercontent.com/98321110/196034144-9c0f13bf-905d-452f-bf6a-a8c3ef38adfe.PNG)   
+![repository_code(3)](https://user-images.githubusercontent.com/98321110/196034383-de5468db-d4ae-4b24-8961-085db3e89053.PNG)
+- **로직 처리**
+  - MyBatis를 통해 데이터 연결을 위해 java의 SqlSession객체를 사용했습니다.
+  - mybatis-config.xml파일로 jdbc관련 설정과 프로젝트에서 사용하는 mapper.xml파일들을 한곳에 모아 관리하였습니다.
+
 </br>
 
 
