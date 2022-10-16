@@ -31,11 +31,14 @@
   >- JSP
   >- JSTL-1.2
   >- Oracle
-  >- Spring Framework 
+  >- Spring Framework
+  >- MyBatis
+  >- Ajax  
   >- SMTP
+  >- cloudinary 
   >- OAuth2.0
   >- REST API
-  
+   
 >#### 2-3. `Front-end`
   >- HTML5
   >- CSS3
