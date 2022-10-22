@@ -87,7 +87,7 @@
 ### 4-5. Repository
 ![repository_code(1)](https://user-images.githubusercontent.com/98321110/196034455-792d8ba2-be30-4746-844f-7304239b5e57.PNG)
 - **로직 처리**
-  - MyBatis를 통해 데이터 연결을 위해 java의 SqlSession객체를 사용했습니다.
+  - MyBatis를 통한 데이터와의 연결을 위해 java의 SqlSession객체를 사용했습니다.
   - jdbc관련 설정과 프로젝트에서 사용하는 mapper.xml파일들을 mybatis-config.xml파일에서 관리하도록 했습니다.
 
 </br>
