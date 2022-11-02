@@ -128,11 +128,11 @@
  
  ---
  
- - mail API   
+ - **mail API**      
  ![image](https://user-images.githubusercontent.com/98321110/196035389-f01ef17e-4fd2-426d-bccf-f5772050af59.png)    
  **화면설명:** 사용자가 아이디·비밀번호 찾기 페이지에서 비밀번호 찾기를 진행하는 경우 보여지는 화면             
   
- ---
+ ---   
  
  ![image](https://user-images.githubusercontent.com/98321110/196035437-47898cb2-2221-4866-9e67-b2c5f70a3c6e.png)    
  **화면설명:** 사용자가 이메일로 전송된 인증번호를 화면에 입력한다.
