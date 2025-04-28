@@ -110,7 +110,7 @@
  </br>
  
  ### 5-1 프로젝트 내용
- - **소셜 로그인(kako, NAVER) API**
+ - **소셜 로그인(kakao, NAVER) API**
    
  ![image](https://user-images.githubusercontent.com/98321110/196035066-7295cada-82dc-47dd-ae62-a504c304b524.png)     
  **화면설명:** 로그인 페이지에서 카카오 계정을 통해 로그인하는 경우의 사용자가 보게 되는 화면   
